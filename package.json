@@ -1,0 +1,50 @@
+{
+    "name": "@opeepl/chartjs-plugin-groupedlegend",
+    "version": "1.0.0",
+    "description": "ChartJS plugin which adds option to put legend entries into groups",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "test": "jest --config jestconfig.json",
+        "build": "tsc",
+        "lint": "eslint . --ext .ts",
+        "lint-and-fix": "eslint . --ext .ts --fix",
+        "prepare": "npm run build",
+        "prepublishOnly": "npm test && npm run lint",
+        "preversion": "npm run lint",
+        "version": "git add -A src",
+        "postversion": "git push && git push --tags"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/opeepl/chartjs-plugin-groupedlegend.git"
+    },
+    "keywords": [
+        "chartjs",
+        "plugin",
+        "legend"
+    ],
+    "author": "Opeepl Aps",
+    "license": "MIT",
+    "files": [
+        "dist/**/*"
+    ],
+    "bugs": {
+        "url": "https://github.com/opeepl/chartjs-plugin-groupedlegend/issues"
+    },
+    "homepage": "https://github.com/opeepl/chartjs-plugin-groupedlegend#readme",
+    "devDependencies": {
+        "@types/jest": "^28.1.1",
+        "@typescript-eslint/eslint-plugin": "^5.27.0",
+        "@typescript-eslint/parser": "^5.27.0",
+        "chart.js": "^3.7.0",
+        "eslint": "^8.17.0",
+        "eslint-config-chartjs": "^0.3.0",
+        "jest": "^28.1.0",
+        "ts-jest": "^28.0.4",
+        "typescript": "^4.7.3"
+    },
+    "peerDependencies": {
+        "chart.js": "^3.0.0"
+    }
+}
