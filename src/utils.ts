@@ -1,4 +1,4 @@
-import { Chart, ChartDataset } from 'chart.js';
+import { Chart, ChartDataset, ChartType } from 'chart.js';
 import { DatasetGroup } from './dataset-group';
 import { styles } from './grouped-legend-styles';
 
@@ -27,7 +27,7 @@ function setGroupVisibility(chart: Chart, groupOffset: number, groupSize: number
 /**
  * Creates span element with given name and optional strike through if the whole group is hidden.
  */
-function createGroupNameHtml(chart: Chart, group: DatasetGroup<ChartDataset>, groupOffset: number, isGroupHidden: boolean): HTMLSpanElement {
+function createGroupNameHtml(chart: Chart, group: DatasetGroup, groupOffset: number, isGroupHidden: boolean): HTMLSpanElement {
   const groupNameHtml = document.createElement('span');
   setStyles(groupNameHtml.style, styles.legendGroupName);
   if (isGroupHidden) {
@@ -75,7 +75,7 @@ function toggleDataset(chart: Chart, datasetIndex: number): void {
  * ```
  * If the dataset is hidden, the name is striked through.
  */
-function createLegendEntryHtml(chart: Chart, dataset: ChartDataset, datasetGlobalIndex: number): HTMLLIElement {
+function createLegendEntryHtml(chart: Chart, dataset: ChartDataset<ChartType, unknown>, datasetGlobalIndex: number): HTMLLIElement {
   const entryHtml = document.createElement('li');
   setStyles(entryHtml.style, styles.legendEntry);
   if (!chart.isDatasetVisible(datasetGlobalIndex)) {
@@ -102,14 +102,14 @@ function createLegendEntryHtml(chart: Chart, dataset: ChartDataset, datasetGloba
  * Finds an offset of the given group in the array of grouped chart datasets.
  * The offset is the index of the first dataset in the group.
  * @example
- * // Simplified DatasetGroup<ChartDataset> to illustrate the example
+ * // Simplified DatasetGroup to illustrate the example
  * const groups = [{datasets: [5, 1, 8, 6]}, {datasets: [7, 0]}];
  * const group1 = groups[0];
  * const group2 = groups[1];
  * const group1Offset = findGroupOffset(group1, groups); // Offset of group1 is 0
  * const group2Offset = findGroupOffset(group2, groups); // Offset of group2 is 4
  */
-function findGroupOffset(targetGroup: DatasetGroup<ChartDataset>, groups: Array<DatasetGroup<ChartDataset>>): number {
+function findGroupOffset(targetGroup: DatasetGroup, groups: Array<DatasetGroup>): number {
   let offset = 0;
   for (const group of groups) {
     if (group === targetGroup) {
@@ -123,7 +123,7 @@ function findGroupOffset(targetGroup: DatasetGroup<ChartDataset>, groups: Array<
 /**
  * Checks if all the datasets in the group are hidden.
  */
-function areAllDatasetsHidden(chart: Chart, group: DatasetGroup<ChartDataset>, groupOffset: number): boolean {
+function areAllDatasetsHidden(chart: Chart, group: DatasetGroup, groupOffset: number): boolean {
   for (let i = 0; i < group.datasets.length; i++) {
     const targetIndex = groupOffset + i;
     if (chart.isDatasetVisible(targetIndex)) {
