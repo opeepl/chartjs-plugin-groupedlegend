@@ -1,6 +1,6 @@
-import { ChartDataset } from 'chart.js';
+import { ChartDataset, ChartType } from 'chart.js';
 
-export interface DatasetGroup<T extends ChartDataset> {
+export interface DatasetGroup<T extends ChartDataset<ChartType, unknown>> {
     name: string;
     datasets: Array<T>;
 }
