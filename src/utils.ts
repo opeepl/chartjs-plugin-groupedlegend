@@ -1,4 +1,4 @@
-import { Chart, ChartDataset, ChartType } from 'chart.js';
+import { Chart, ChartDataset, ChartType, PointStyle } from 'chart.js';
 import { DatasetGroup } from './dataset-group';
 import { styles } from './grouped-legend-styles';
 
@@ -41,14 +41,33 @@ function createGroupNameHtml(chart: Chart, group: DatasetGroup, groupOffset: num
 }
 
 /**
+ * Based on chart.legend.options, determines the style of the groupedlegend entries.
+ * Currently, only 'rect' and 'circle' are supported.
+ */
+function determineLegendStyle(chart: Chart): PointStyle {
+  let legendPointStyle: PointStyle = 'rect';
+  if (chart.legend?.options.labels.usePointStyle) {
+    legendPointStyle = 'circle';
+    const chartPointStyle = chart.legend.options.labels.pointStyle;
+    if (chartPointStyle === undefined || chartPointStyle === 'rect' || chartPointStyle === 'circle') {
+      legendPointStyle = chartPointStyle ?? 'circle';
+    } else {
+      console.warn(`chart.legend.options.labels.pointStyle is set to ${chart.legend.options.labels.pointStyle}. Only 'rect' and 'circle' are supported by groupedlegend. Falling back to 'circle'.`);
+    }
+  }
+  return legendPointStyle;
+}
+
+/**
  * Creates SVG rectangle legend marker element with the given color.
  */
-function createSvgMarker(color: string): SVGSVGElement {
+function createSvgMarker(color: string, style: PointStyle): SVGSVGElement {
   const svgNs = 'http://www.w3.org/2000/svg';
   const svgContainer = document.createElementNS(svgNs, 'svg');
-  setStyles(svgContainer.style, styles.legendEntryMarker);
+  const markerStyles = style === 'rect' ? styles.legendEntryMarkerRect : styles.legendEntryMarkerCircle;
+  setStyles(svgContainer.style, styles.legendEntryMarkerBase);
+  setStyles(svgContainer.style, markerStyles);
   const rect = document.createElementNS(svgNs, 'rect');
-  setStyles(rect.style, styles.legendEntryMarkerRect);
   rect.setAttribute('height', '100%');
   rect.setAttribute('width', '100%');
   rect.setAttribute('fill', color);
@@ -75,14 +94,15 @@ function toggleDataset(chart: Chart, datasetIndex: number): void {
  * ```
  * If the dataset is hidden, the name is striked through.
  */
-function createLegendEntryHtml(chart: Chart, dataset: ChartDataset<ChartType, unknown>, datasetGlobalIndex: number): HTMLLIElement {
+function createLegendEntryHtml(chart: Chart, markerStyle: PointStyle, dataset: ChartDataset<ChartType, unknown>, datasetGlobalIndex: number): HTMLLIElement {
   const entryHtml = document.createElement('li');
   setStyles(entryHtml.style, styles.legendEntry);
   if (!chart.isDatasetVisible(datasetGlobalIndex)) {
     setStyles(entryHtml.style, styles.hidden);
   }
 
-  const entryMarkerHtml = createSvgMarker((dataset.backgroundColor ?? '#FFFFFF').toString());
+  const markerColor = (dataset.backgroundColor ?? '#FFFFFF').toString();
+  const entryMarkerHtml = createSvgMarker(markerColor, markerStyle);
 
   const entryNameHtml = document.createElement('span');
   setStyles(entryNameHtml.style, styles.legendEntryName);
@@ -138,5 +158,6 @@ export {
   createGroupNameHtml,
   createLegendEntryHtml,
   findGroupOffset,
-  areAllDatasetsHidden
+  areAllDatasetsHidden,
+  determineLegendStyle,
 };

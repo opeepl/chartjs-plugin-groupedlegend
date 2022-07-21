@@ -1,5 +1,5 @@
 import { Chart, Plugin, UpdateMode } from 'chart.js';
-import { setStyles, findGroupOffset, areAllDatasetsHidden, createGroupNameHtml, createLegendEntryHtml } from './utils';
+import { setStyles, findGroupOffset, areAllDatasetsHidden, createGroupNameHtml, createLegendEntryHtml, determineLegendStyle } from './utils';
 import { GroupedLegendOptions } from './grouped-legend-options';
 import { styles } from './grouped-legend-styles';
 
@@ -47,6 +47,9 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
       legendContainerHtml.firstChild.remove();
     }
 
+    // Determine legend style - 'rect' or 'circle'
+    const legendPointStyle = determineLegendStyle(chart);
+
     // Generate new legend
     const isLegendEnabled = options.display ?? true;
     if (isLegendEnabled) {
@@ -74,7 +77,7 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
           // Dataset global index is its index in the chart's datasets array
           const datasetGlobalIndex = groupOffset + localIndex;
           const dataset = group.datasets[localIndex];
-          const entry = createLegendEntryHtml(chart, dataset, datasetGlobalIndex);
+          const entry = createLegendEntryHtml(chart, legendPointStyle, dataset, datasetGlobalIndex);
           groupEntriesHtml.appendChild(entry);
         }
 

@@ -40,13 +40,21 @@ export const styles: Record<string, Partial<CSSStyleDeclaration>> = {
     minHeight: '20px',
     marginLeft: '10px',
   },
-  legendEntryMarker: {
-    height: '12px',
-    maxWidth: '40px',
-    minWidth: '40px',
+  legendEntryMarkerBase: {
     boxShadow: '0px 0px 0.8px 0px rgba(0, 0, 0, 0.5)',
     marginRight: '6px',
     display: 'inline-block',
+  },
+  legendEntryMarkerRect: {
+    height: '12px',
+    maxWidth: '40px',
+    minWidth: '40px',
+  },
+  legendEntryMarkerCircle: {
+    height: '18px',
+    maxWidth: '18px',
+    minWidth: '18px',
+    borderRadius: '50%',
   },
   legendEntryName: {
     height: '100%',
