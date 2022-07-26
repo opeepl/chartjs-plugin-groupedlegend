@@ -1,6 +1,6 @@
 import { Chart, ChartDataset, ChartType, PointStyle } from 'chart.js';
 import { DatasetGroup } from './dataset-group';
-import { styles } from './grouped-legend-styles';
+import { Styles } from './grouped-legend-styles';
 
 /**
  * Utility function to set CSS styles on an HTML element.
@@ -29,9 +29,9 @@ function setGroupVisibility(chart: Chart, groupOffset: number, groupSize: number
  */
 function createGroupNameHtml(chart: Chart, group: DatasetGroup, groupOffset: number, isGroupHidden: boolean): HTMLSpanElement {
   const groupNameHtml = document.createElement('span');
-  setStyles(groupNameHtml.style, styles.legendGroupName);
+  setStyles(groupNameHtml.style, Styles.legendGroupName);
   if (isGroupHidden) {
-    setStyles(groupNameHtml.style, styles.hidden);
+    setStyles(groupNameHtml.style, Styles.hidden);
   }
   groupNameHtml.innerText = group.name;
   groupNameHtml.onclick = () => {
@@ -64,8 +64,8 @@ function determineLegendStyle(chart: Chart): PointStyle {
 function createSvgMarker(color: string, style: PointStyle): SVGSVGElement {
   const svgNs = 'http://www.w3.org/2000/svg';
   const svgContainer = document.createElementNS(svgNs, 'svg');
-  const markerStyles = style === 'rect' ? styles.legendEntryMarkerRect : styles.legendEntryMarkerCircle;
-  setStyles(svgContainer.style, styles.legendEntryMarkerBase);
+  const markerStyles = style === 'rect' ? Styles.legendEntryMarkerRect : Styles.legendEntryMarkerCircle;
+  setStyles(svgContainer.style, Styles.legendEntryMarkerBase);
   setStyles(svgContainer.style, markerStyles);
   const rect = document.createElementNS(svgNs, 'rect');
   rect.setAttribute('height', '100%');
@@ -96,16 +96,16 @@ function toggleDataset(chart: Chart, datasetIndex: number): void {
  */
 function createLegendEntryHtml(chart: Chart, markerStyle: PointStyle, dataset: ChartDataset<ChartType, unknown>, datasetGlobalIndex: number): HTMLLIElement {
   const entryHtml = document.createElement('li');
-  setStyles(entryHtml.style, styles.legendEntry);
+  setStyles(entryHtml.style, Styles.legendEntry);
   if (!chart.isDatasetVisible(datasetGlobalIndex)) {
-    setStyles(entryHtml.style, styles.hidden);
+    setStyles(entryHtml.style, Styles.hidden);
   }
 
   const markerColor = (dataset.backgroundColor ?? '#FFFFFF').toString();
   const entryMarkerHtml = createSvgMarker(markerColor, markerStyle);
 
   const entryNameHtml = document.createElement('span');
-  setStyles(entryNameHtml.style, styles.legendEntryName);
+  setStyles(entryNameHtml.style, Styles.legendEntryName);
   entryNameHtml.innerText = dataset.label ?? '';
 
   entryHtml.appendChild(entryMarkerHtml);

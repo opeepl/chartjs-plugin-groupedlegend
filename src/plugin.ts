@@ -1,7 +1,7 @@
 import { Chart, Plugin, UpdateMode } from 'chart.js';
 import { setStyles, findGroupOffset, areAllDatasetsHidden, createGroupNameHtml, createLegendEntryHtml, determineLegendStyle } from './utils';
 import { GroupedLegendOptions } from './grouped-legend-options';
-import { styles } from './grouped-legend-styles';
+import { Styles } from './grouped-legend-styles';
 
 /**
  * This chartjs plugin displays a legend labels grouped as provided in the options.
@@ -25,10 +25,10 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
     const externalContainerHtml = canvasHtml.parentElement as HTMLElement;
 
     const legendContainerHtml = document.createElement('div');
-    setStyles(legendContainerHtml.style, styles.legendContainer);
+    setStyles(legendContainerHtml.style, Styles.legendContainer);
 
     const canvasContainerHtml = document.createElement('div');
-    setStyles(canvasContainerHtml.style, styles.canvasContainer);
+    setStyles(canvasContainerHtml.style, Styles.canvasContainer);
 
     externalContainerHtml.appendChild(legendContainerHtml);
     externalContainerHtml.appendChild(canvasContainerHtml);
@@ -38,6 +38,8 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
      * Regenerates grouped legend HTML.
      */
   afterUpdate: function(chart: Chart, _args: { mode: UpdateMode }, options: GroupedLegendOptions): void {
+    // Grab default values before every drawing, as they might have changed in the meantime
+    Styles.setDefaultsFromChart(chart);
     // The cast is safe, as there is always some container element (at worst, it is the <body>)
     const containerElement = chart.canvas.parentElement as HTMLElement;
     // The cast is safe, as HTML was structured that way in start()
@@ -59,7 +61,7 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
       for (const group of groups) {
         // Create div container for each group
         const groupContainerHtml = document.createElement('div');
-        setStyles(groupContainerHtml.style, styles.legendGroupContainer);
+        setStyles(groupContainerHtml.style, Styles.legendGroupContainer);
 
         // Find offset of the current group in the array of groups.
         // In practice, it's the index of the first dataset in the group among all the datasets in the chart.
@@ -71,7 +73,7 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
 
         // Create list for all the group entries (color + name)
         const groupEntriesHtml = document.createElement('ul');
-        setStyles(groupEntriesHtml.style, styles.legendGroup);
+        setStyles(groupEntriesHtml.style, Styles.legendGroup);
 
         for (let localIndex = 0; localIndex < group.datasets.length; localIndex++) {
           // Dataset global index is its index in the chart's datasets array
