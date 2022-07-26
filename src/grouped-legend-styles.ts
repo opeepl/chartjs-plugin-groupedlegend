@@ -40,11 +40,11 @@ export class Styles {
       flexDirection: 'column',
       marginLeft: '0.5rem',
       marginRight: '0.5rem',
-      fontSize: `${valueOrDefault(this.chartDefaults.font.size, Chart.defaults.font.size)}px`,
-      fontFamily: valueOrDefault(this.chartDefaults.font.family, Chart.defaults.font.family),
-      fontStyle: valueOrDefault(this.chartDefaults.font.style, Chart.defaults.font.style),
-      fontWeight: valueOrDefault(this.chartDefaults.font.weight, Chart.defaults.font.weight),
-      lineHeight: valueOrDefault(this.chartDefaults.font.lineHeight, Chart.defaults.font.lineHeight).toString(),
+      fontSize: `${valueOrDefault(this.chartDefaults.font?.size, Chart.defaults.font.size)}px`,
+      fontFamily: valueOrDefault(this.chartDefaults.font?.family, Chart.defaults.font.family),
+      fontStyle: valueOrDefault(this.chartDefaults.font?.style, Chart.defaults.font.style),
+      fontWeight: valueOrDefault(this.chartDefaults.font?.weight, Chart.defaults.font.weight) ?? undefined,
+      lineHeight: valueOrDefault(this.chartDefaults.font?.lineHeight, Chart.defaults.font.lineHeight)?.toString(),
       color: valueOrDefault(this.chartDefaults.color, Chart.defaults.color).toString(),
     };
   }
