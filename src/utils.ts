@@ -1,9 +1,8 @@
 import { Chart, ChartDataset, ChartType, PointStyle } from 'chart.js';
 import { DatasetGroup } from './dataset-group';
-import { Styles } from './grouped-legend-styles';
 
 /**
- * Utility function to set CSS styles on an HTML element.
+ * Set CSS styles on an HTML element.
  */
 function setStyles(style: CSSStyleDeclaration, legendContainerStyles: Partial<CSSStyleDeclaration>): void {
   for (const key in legendContainerStyles) {
@@ -11,6 +10,27 @@ function setStyles(style: CSSStyleDeclaration, legendContainerStyles: Partial<CS
       style[key] = legendContainerStyles[key] ?? '';
     }
   }
+}
+
+/**
+ * Apply the given styles to the provided list of HTML elements.
+ * @example
+ * setStylesAll(document.querySelectorAll('.groupedlegend-group-container'), Styles.legendGroupContainer);
+ */
+function setStylesAll(elements: NodeListOf<HTMLElement>, styles: Partial<CSSStyleDeclaration>): void {
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    setStyles(element.style, styles);
+  }
+}
+
+/**
+ * Create element with the given tag name and class names.
+ */
+ function createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, ...classNames: Array<string>): HTMLElementTagNameMap[K] {
+  const element = document.createElement(tagName);
+  element.classList.add(...classNames);
+  return element;
 }
 
 /**
@@ -28,13 +48,12 @@ function setGroupVisibility(chart: Chart, groupOffset: number, groupSize: number
  * Creates span element with given name and optional strike through if the whole group is hidden.
  */
 function createGroupNameHtml(chart: Chart, group: DatasetGroup, groupOffset: number, isGroupHidden: boolean): HTMLSpanElement {
-  const groupNameHtml = document.createElement('span');
-  setStyles(groupNameHtml.style, Styles.legendGroupName);
+  const groupNameHtml = createElement('span', 'groupedlegend-group-name');
   if (isGroupHidden) {
-    setStyles(groupNameHtml.style, Styles.hidden);
+    groupNameHtml.classList.add('hidden');
   }
   groupNameHtml.innerText = group.name;
-  groupNameHtml.onclick = () => {
+  groupNameHtml.onclick = (): void => {
     setGroupVisibility(chart, groupOffset, group.datasets.length, isGroupHidden);
   };
   return groupNameHtml;
@@ -52,7 +71,9 @@ function determineLegendStyle(chart: Chart): PointStyle {
     if (chartPointStyle === undefined || chartPointStyle === 'rect' || chartPointStyle === 'circle') {
       legendPointStyle = chartPointStyle ?? 'circle';
     } else {
-      console.warn(`chart.legend.options.labels.pointStyle is set to ${chart.legend.options.labels.pointStyle}. Only 'rect' and 'circle' are supported by groupedlegend. Falling back to 'circle'.`);
+      console.warn(
+        `chart.legend.options.labels.pointStyle is set to ${chart.legend.options.labels.pointStyle}. Only 'rect' and 'circle' are supported by groupedlegend. Falling back to 'circle'.`,
+      );
     }
   }
   return legendPointStyle;
@@ -64,9 +85,8 @@ function determineLegendStyle(chart: Chart): PointStyle {
 function createSvgMarker(color: string, style: PointStyle): SVGSVGElement {
   const svgNs = 'http://www.w3.org/2000/svg';
   const svgContainer = document.createElementNS(svgNs, 'svg');
-  const markerStyles = style === 'rect' ? Styles.legendEntryMarkerRect : Styles.legendEntryMarkerCircle;
-  setStyles(svgContainer.style, Styles.legendEntryMarkerBase);
-  setStyles(svgContainer.style, markerStyles);
+  svgContainer.classList.add(`groupedlegend-marker`);
+  svgContainer.classList.add(`${style}`);
   const rect = document.createElementNS(svgNs, 'rect');
   rect.setAttribute('height', '100%');
   rect.setAttribute('width', '100%');
@@ -94,25 +114,28 @@ function toggleDataset(chart: Chart, datasetIndex: number): void {
  * ```
  * If the dataset is hidden, the name is striked through.
  */
-function createLegendEntryHtml(chart: Chart, markerStyle: PointStyle, dataset: ChartDataset<ChartType, unknown>, datasetGlobalIndex: number): HTMLLIElement {
-  const entryHtml = document.createElement('li');
-  setStyles(entryHtml.style, Styles.legendEntry);
+function createLegendEntryHtml(
+  chart: Chart,
+  markerStyle: PointStyle,
+  dataset: ChartDataset<ChartType, unknown>,
+  datasetGlobalIndex: number,
+): HTMLLIElement {
+  const entryHtml = createElement('li', 'groupedlegend-entry');
   if (!chart.isDatasetVisible(datasetGlobalIndex)) {
-    setStyles(entryHtml.style, Styles.hidden);
+    entryHtml.classList.add('hidden');
   }
 
   const markerColor = (dataset.backgroundColor ?? '#FFFFFF').toString();
   const entryMarkerHtml = createSvgMarker(markerColor, markerStyle);
 
-  const entryNameHtml = document.createElement('span');
-  setStyles(entryNameHtml.style, Styles.legendEntryName);
+  const entryNameHtml = createElement('span', 'groupedlegend-entry-name');
   entryNameHtml.innerText = dataset.label ?? '';
 
   entryHtml.appendChild(entryMarkerHtml);
   entryHtml.appendChild(entryNameHtml);
 
   // When the dataset name or label is clicked, toggle the dataset visibility
-  entryHtml.onclick = () => {
+  entryHtml.onclick = (): void => {
     toggleDataset(chart, datasetGlobalIndex);
   };
   return entryHtml;
@@ -155,6 +178,8 @@ function areAllDatasetsHidden(chart: Chart, group: DatasetGroup, groupOffset: nu
 
 export {
   setStyles,
+  setStylesAll,
+  createElement,
   createGroupNameHtml,
   createLegendEntryHtml,
   findGroupOffset,
