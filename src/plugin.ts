@@ -1,5 +1,15 @@
-import { Chart, Plugin, UpdateMode } from 'chart.js';
-import { setStyles, findGroupOffset, areAllDatasetsHidden, createGroupNameHtml, createLegendEntryHtml, determineLegendStyle } from './utils';
+import { Chart, Plugin } from 'chart.js';
+import {
+  areAllDatasetsHidden,
+  createElement,
+  createGroupNameHtml,
+  createLegendEntryHtml,
+  determineLegendStyle,
+  findGroupOffset,
+  setStyles,
+  setStylesAll,
+} from './utils';
+
 import { GroupedLegendOptions } from './grouped-legend-options';
 import { Styles } from './grouped-legend-styles';
 
@@ -9,41 +19,37 @@ import { Styles } from './grouped-legend-styles';
 export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
   id: 'groupedlegend',
   /**
-     * Restructures HTML from
-     * <external-container>
-     *     canvas
-     * to
-     * <external-container>
-     *     div.legend-container
-     *     div.canvas-container
-     *         canvas
-     * to allow for proper positioning and scaling of the legend and canvas with flexbox.
-     */
+   * Restructures HTML from
+   * <external-container>
+   *     canvas
+   * to
+   * <external-container>
+   *     div.legend-container
+   *     div.canvas-container
+   *         canvas
+   * to allow for proper positioning and scaling of the legend and canvas with flexbox.
+   */
   start: (chart: Chart) => {
     const canvasHtml = chart.canvas;
-    // The cast is safe, as there is always some container element (at worst, it is the <body>)
+    // There is always some container element (at worst, it is the <body>)
     const externalContainerHtml = canvasHtml.parentElement as HTMLElement;
-
-    const legendContainerHtml = document.createElement('div');
-    setStyles(legendContainerHtml.style, Styles.legendContainer);
-
-    const canvasContainerHtml = document.createElement('div');
-    setStyles(canvasContainerHtml.style, Styles.canvasContainer);
+    const legendContainerHtml = createElement('div', 'groupedlegend-legend-container');
+    const canvasContainerHtml = createElement('div', 'groupedlegend-canvas-container');
 
     externalContainerHtml.appendChild(legendContainerHtml);
     externalContainerHtml.appendChild(canvasContainerHtml);
     canvasContainerHtml.appendChild(canvasHtml);
   },
   /**
-     * Regenerates grouped legend HTML.
-     */
-  afterUpdate: function(chart: Chart, _args: { mode: UpdateMode }, options: GroupedLegendOptions): void {
+   * Regenerates grouped legend HTML.
+   */
+  afterUpdate: function (chart: Chart, _args: any, options: GroupedLegendOptions): void {
     // Grab default values before every drawing, as they might have changed in the meantime
-    Styles.setDefaultsFromChart(chart);
+    Styles.initialize(chart);
     // The cast is safe, as there is always some container element (at worst, it is the <body>)
-    const containerElement = chart.canvas.parentElement as HTMLElement;
+    const canvasContainerHtml = chart.canvas.parentElement as HTMLElement;
     // The cast is safe, as HTML was structured that way in start()
-    const legendContainerHtml = containerElement.previousSibling as HTMLElement;
+    const legendContainerHtml = canvasContainerHtml.previousSibling as HTMLElement;
     // Remove old legend items
     while (legendContainerHtml.firstChild) {
       legendContainerHtml.firstChild.remove();
@@ -60,8 +66,7 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
       const groups = options.groups ?? [];
       for (const group of groups) {
         // Create div container for each group
-        const groupContainerHtml = document.createElement('div');
-        setStyles(groupContainerHtml.style, Styles.legendGroupContainer);
+        const groupContainerHtml = createElement('div', 'groupedlegend-group-container');
 
         // Find offset of the current group in the array of groups.
         // In practice, it's the index of the first dataset in the group among all the datasets in the chart.
@@ -72,8 +77,7 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
         const groupNameHtml = createGroupNameHtml(chart, group, groupOffset, isGroupHidden);
 
         // Create list for all the group entries (color + name)
-        const groupEntriesHtml = document.createElement('ul');
-        setStyles(groupEntriesHtml.style, Styles.legendGroup);
+        const groupEntriesHtml = createElement('ul', 'groupedlegend-group-entries');
 
         for (let localIndex = 0; localIndex < group.datasets.length; localIndex++) {
           // Dataset global index is its index in the chart's datasets array
@@ -88,6 +92,24 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
         groupContainers.appendChild(groupContainerHtml);
       }
       legendContainerHtml.appendChild(groupContainers);
+
+      // Apply all the styles
+      setStyles(legendContainerHtml.style, Styles.legendContainer);
+      setStyles(canvasContainerHtml.style, Styles.canvasContainer);
+
+      const legendElements = (selector: string): NodeListOf<HTMLElement> => legendContainerHtml.querySelectorAll(selector);
+      setStylesAll(legendElements('.groupedlegend-group-container'), Styles.legendGroupContainer);
+      setStylesAll(legendElements('.groupedlegend-group-name'), Styles.legendGroupName);
+      setStylesAll(legendElements('.groupedlegend-group-entries'), Styles.legendGroupEntries);
+
+      setStylesAll(legendElements('.groupedlegend-marker'), Styles.legendEntryMarkerBase);
+      setStylesAll(legendElements('.groupedlegend-marker.rect'), Styles.legendEntryMarkerRect);
+      setStylesAll(legendElements('.groupedlegend-marker.circle'), Styles.legendEntryMarkerCircle);
+
+      setStylesAll(legendElements('.groupedlegend-entry'), Styles.legendGroupEntry);
+      setStylesAll(legendElements('.groupedlegend-entry-name'), Styles.legendEntryName);
+
+      setStylesAll(legendElements('.hidden'), Styles.hidden);
     }
   },
 };
