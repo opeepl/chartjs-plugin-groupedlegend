@@ -1,11 +1,11 @@
-import { Chart, ChartOptions } from 'chart.js';
-import { valueOrDefault } from 'chart.js/helpers';
+import { Chart, ChartOptions, FontSpec } from 'chart.js';
+import { resolve, toFont } from 'chart.js/helpers';
 
 export class Styles {
-  private static chartDefaults: ChartOptions;
+  private static chartOptions: ChartOptions;
 
-  static setDefaultsFromChart(chart: Chart): void {
-    this.chartDefaults = chart.options;
+  static initialize(chart: Chart): void {
+    this.chartOptions = chart.options;
   }
 
   static get hidden(): Partial<CSSStyleDeclaration> {
@@ -24,6 +24,7 @@ export class Styles {
   }
 
   static get legendContainer(): Partial<CSSStyleDeclaration> {
+    const font = toFont(this.chartOptions.plugins?.legend?.labels?.font as Partial<FontSpec>);
     return {
       display: 'flex',
       flexDirection: 'row',
@@ -31,6 +32,11 @@ export class Styles {
       justifyContent: 'center',
       maxHeight: '100%',
       cursor: 'default',
+      font: font.string,
+      paddingLeft: '1em',
+      paddingRight: '1em',
+      // toFont returns canvas-friendly values, so lineHeight needs to be used with a px unit
+      lineHeight: `${font.lineHeight}px`,
     };
   }
 
@@ -38,14 +44,7 @@ export class Styles {
     return {
       display: 'flex',
       flexDirection: 'column',
-      marginLeft: '0.5rem',
-      marginRight: '0.5rem',
-      fontSize: `${valueOrDefault(this.chartDefaults.font?.size, Chart.defaults.font.size)}px`,
-      fontFamily: valueOrDefault(this.chartDefaults.font?.family, Chart.defaults.font.family),
-      fontStyle: valueOrDefault(this.chartDefaults.font?.style, Chart.defaults.font.style),
-      fontWeight: valueOrDefault(this.chartDefaults.font?.weight, Chart.defaults.font.weight) ?? undefined,
-      lineHeight: valueOrDefault(this.chartDefaults.font?.lineHeight, Chart.defaults.font.lineHeight)?.toString(),
-      color: valueOrDefault(this.chartDefaults.color, Chart.defaults.color).toString(),
+      color: resolve([this.chartOptions.color, Chart.defaults.color])?.toString(),
     };
   }
 
@@ -55,7 +54,7 @@ export class Styles {
     };
   }
 
-  static get legendGroup(): Partial<CSSStyleDeclaration> {
+  static get legendGroupEntries(): Partial<CSSStyleDeclaration> {
     return {
       flexGrow: '1',
       listStyle: 'none',
@@ -63,37 +62,36 @@ export class Styles {
     };
   }
 
-  static get legendEntry(): Partial<CSSStyleDeclaration> {
+  static get legendGroupEntry(): Partial<CSSStyleDeclaration> {
     return {
       padding: '0',
+      marginRight: '0.5em',
       display: 'inline-flex',
       alignItems: 'center',
-      minHeight: '20px',
-      marginLeft: '10px',
     };
   }
 
   static get legendEntryMarkerBase(): Partial<CSSStyleDeclaration> {
     return {
       boxShadow: '0px 0px 0.8px 0px rgba(0, 0, 0, 0.5)',
-      marginRight: '6px',
+      marginRight: '0.35em',
       display: 'inline-block',
     };
   }
 
   static get legendEntryMarkerRect(): Partial<CSSStyleDeclaration> {
     return {
-      height: '12px',
-      maxWidth: '40px',
-      minWidth: '40px',
+      height: '1em',
+      maxWidth: '3.3em',
+      minWidth: '3.3em',
     };
   }
 
   static get legendEntryMarkerCircle(): Partial<CSSStyleDeclaration> {
     return {
-      height: '18px',
-      maxWidth: '18px',
-      minWidth: '18px',
+      height: '1.45em',
+      maxWidth: '1.45em',
+      minWidth: '1.45em',
       borderRadius: '50%',
     };
   }
