@@ -1,4 +1,4 @@
-import { Chart, Plugin } from 'chart.js';
+import { Chart, Plugin, UpdateMode } from 'chart.js';
 import {
   areAllDatasetsHidden,
   createElement,
@@ -43,7 +43,7 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
   /**
    * Regenerates grouped legend HTML.
    */
-  afterUpdate: function (chart: Chart, _args: any, options: GroupedLegendOptions): void {
+  afterUpdate: function (chart: Chart, _args: { mode: UpdateMode }, options: GroupedLegendOptions): void {
     // Grab default values before every drawing, as they might have changed in the meantime
     Styles.initialize(chart);
     // The cast is safe, as there is always some container element (at worst, it is the <body>)
