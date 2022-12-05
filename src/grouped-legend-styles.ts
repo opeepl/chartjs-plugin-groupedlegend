@@ -2,20 +2,20 @@ import { Chart, ChartOptions, FontSpec } from 'chart.js';
 import { resolve, toFont } from 'chart.js/helpers';
 
 export class Styles {
-  private static chartOptions: ChartOptions;
+  private chartOptions: ChartOptions;
 
-  static initialize(chart: Chart): void {
+  constructor(chart: Chart) {
     this.chartOptions = chart.options;
   }
 
-  static get hidden(): Partial<CSSStyleDeclaration> {
+  get hidden(): Partial<CSSStyleDeclaration> {
     return {
       textDecoration: 'line-through',
       textDecorationThickness: '0.24em',
     };
   }
 
-  static get canvasContainer(): Partial<CSSStyleDeclaration> {
+  get canvasContainer(): Partial<CSSStyleDeclaration> {
     return {
       maxHeight: '100%',
       minHeight: '0',
@@ -23,7 +23,7 @@ export class Styles {
     };
   }
 
-  static get legendContainer(): Partial<CSSStyleDeclaration> {
+  get legendContainer(): Partial<CSSStyleDeclaration> {
     const font = toFont(this.chartOptions.plugins?.legend?.labels?.font as Partial<FontSpec>);
     return {
       display: 'flex',
@@ -40,7 +40,7 @@ export class Styles {
     };
   }
 
-  static get legendGroupContainer(): Partial<CSSStyleDeclaration> {
+  get legendGroupContainer(): Partial<CSSStyleDeclaration> {
     return {
       display: 'flex',
       flexDirection: 'column',
@@ -48,13 +48,13 @@ export class Styles {
     };
   }
 
-  static get legendGroupName(): Partial<CSSStyleDeclaration> {
+  get legendGroupName(): Partial<CSSStyleDeclaration> {
     return {
       textAlign: 'center',
     };
   }
 
-  static get legendGroupEntries(): Partial<CSSStyleDeclaration> {
+  get legendGroupEntries(): Partial<CSSStyleDeclaration> {
     return {
       flexGrow: '1',
       listStyle: 'none',
@@ -62,7 +62,7 @@ export class Styles {
     };
   }
 
-  static get legendGroupEntry(): Partial<CSSStyleDeclaration> {
+  get legendGroupEntry(): Partial<CSSStyleDeclaration> {
     return {
       padding: '0',
       marginRight: '0.5em',
@@ -71,7 +71,7 @@ export class Styles {
     };
   }
 
-  static get legendEntryMarkerBase(): Partial<CSSStyleDeclaration> {
+  get legendEntryMarkerBase(): Partial<CSSStyleDeclaration> {
     return {
       boxShadow: '0px 0px 0.8px 0px rgba(0, 0, 0, 0.5)',
       marginRight: '0.35em',
@@ -79,7 +79,7 @@ export class Styles {
     };
   }
 
-  static get legendEntryMarkerRect(): Partial<CSSStyleDeclaration> {
+  get legendEntryMarkerRect(): Partial<CSSStyleDeclaration> {
     return {
       height: '1em',
       maxWidth: '3.3em',
@@ -87,7 +87,7 @@ export class Styles {
     };
   }
 
-  static get legendEntryMarkerCircle(): Partial<CSSStyleDeclaration> {
+  get legendEntryMarkerCircle(): Partial<CSSStyleDeclaration> {
     return {
       height: '1.45em',
       maxWidth: '1.45em',
@@ -96,7 +96,7 @@ export class Styles {
     };
   }
 
-  static get legendEntryName(): Partial<CSSStyleDeclaration> {
+  get legendEntryName(): Partial<CSSStyleDeclaration> {
     return {
       height: '100%',
       display: 'inline-block',

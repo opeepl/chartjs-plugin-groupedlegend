@@ -29,7 +29,7 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
    *         canvas
    * to allow for proper positioning and scaling of the legend and canvas with flexbox.
    */
-  start: (chart: Chart) => {
+  start: (chart: Chart): void => {
     const canvasHtml = chart.canvas;
     // There is always some container element (at worst, it is the <body>)
     const externalContainerHtml = canvasHtml.parentElement as HTMLElement;
@@ -43,9 +43,9 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
   /**
    * Regenerates grouped legend HTML.
    */
-  afterUpdate: function (chart: Chart, _args: { mode: UpdateMode }, options: GroupedLegendOptions): void {
+  afterUpdate: (chart: Chart, _args: { mode: UpdateMode }, options: GroupedLegendOptions): void => {
     // Grab default values before every drawing, as they might have changed in the meantime
-    Styles.initialize(chart);
+    const styles = new Styles(chart);
     // The cast is safe, as there is always some container element (at worst, it is the <body>)
     const canvasContainerHtml = chart.canvas.parentElement as HTMLElement;
     // The cast is safe, as HTML was structured that way in start()
@@ -94,22 +94,22 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
       legendContainerHtml.appendChild(groupContainers);
 
       // Apply all the styles
-      setStyles(legendContainerHtml.style, Styles.legendContainer);
-      setStyles(canvasContainerHtml.style, Styles.canvasContainer);
+      setStyles(legendContainerHtml.style, styles.legendContainer);
+      setStyles(canvasContainerHtml.style, styles.canvasContainer);
 
       const legendElements = (selector: string): NodeListOf<HTMLElement> => legendContainerHtml.querySelectorAll(selector);
-      setStylesAll(legendElements('.groupedlegend-group-container'), Styles.legendGroupContainer);
-      setStylesAll(legendElements('.groupedlegend-group-name'), Styles.legendGroupName);
-      setStylesAll(legendElements('.groupedlegend-group-entries'), Styles.legendGroupEntries);
+      setStylesAll(legendElements('.groupedlegend-group-container'), styles.legendGroupContainer);
+      setStylesAll(legendElements('.groupedlegend-group-name'), styles.legendGroupName);
+      setStylesAll(legendElements('.groupedlegend-group-entries'), styles.legendGroupEntries);
 
-      setStylesAll(legendElements('.groupedlegend-marker'), Styles.legendEntryMarkerBase);
-      setStylesAll(legendElements('.groupedlegend-marker.rect'), Styles.legendEntryMarkerRect);
-      setStylesAll(legendElements('.groupedlegend-marker.circle'), Styles.legendEntryMarkerCircle);
+      setStylesAll(legendElements('.groupedlegend-marker'), styles.legendEntryMarkerBase);
+      setStylesAll(legendElements('.groupedlegend-marker.rect'), styles.legendEntryMarkerRect);
+      setStylesAll(legendElements('.groupedlegend-marker.circle'), styles.legendEntryMarkerCircle);
 
-      setStylesAll(legendElements('.groupedlegend-entry'), Styles.legendGroupEntry);
-      setStylesAll(legendElements('.groupedlegend-entry-name'), Styles.legendEntryName);
+      setStylesAll(legendElements('.groupedlegend-entry'), styles.legendGroupEntry);
+      setStylesAll(legendElements('.groupedlegend-entry-name'), styles.legendEntryName);
 
-      setStylesAll(legendElements('.hidden'), Styles.hidden);
+      setStylesAll(legendElements('.hidden'), styles.hidden);
     }
   },
 };
