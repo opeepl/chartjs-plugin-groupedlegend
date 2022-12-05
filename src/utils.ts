@@ -1,5 +1,6 @@
 import { Chart, ChartDataset, ChartType, PointStyle } from 'chart.js';
 import { DatasetGroup } from './dataset-group';
+import { Styles } from './grouped-legend-styles';
 
 /**
  * Set CSS styles on an HTML element.
@@ -27,7 +28,7 @@ function setStylesAll(elements: NodeListOf<HTMLElement>, styles: Partial<CSSStyl
 /**
  * Create element with the given tag name and class names.
  */
- function createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, ...classNames: Array<string>): HTMLElementTagNameMap[K] {
+function createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, ...classNames: Array<string>): HTMLElementTagNameMap[K] {
   const element = document.createElement(tagName);
   element.classList.add(...classNames);
   return element;
@@ -85,7 +86,7 @@ function determineLegendStyle(chart: Chart): PointStyle {
 function createSvgMarker(color: string, style: PointStyle): SVGSVGElement {
   const svgNs = 'http://www.w3.org/2000/svg';
   const svgContainer = document.createElementNS(svgNs, 'svg');
-  svgContainer.classList.add(`groupedlegend-marker`);
+  svgContainer.classList.add('groupedlegend-marker');
   svgContainer.classList.add(`${style}`);
   const rect = document.createElementNS(svgNs, 'rect');
   rect.setAttribute('height', '100%');
@@ -176,6 +177,29 @@ function areAllDatasetsHidden(chart: Chart, group: DatasetGroup, groupOffset: nu
   return true;
 }
 
+/**
+ * Builds Styles object using current chart and applies styling to all legend elements.
+ */
+function applyStyles(chart: Chart, legendContainerHtml: HTMLElement, canvasContainerHtml: HTMLElement) {
+  const styles = new Styles(chart);
+  setStyles(legendContainerHtml.style, styles.legendContainer);
+  setStyles(canvasContainerHtml.style, styles.canvasContainer);
+
+  const legendElements = (selector: string): NodeListOf<HTMLElement> => legendContainerHtml.querySelectorAll(selector);
+  setStylesAll(legendElements('.groupedlegend-group-container'), styles.legendGroupContainer);
+  setStylesAll(legendElements('.groupedlegend-group-name'), styles.legendGroupName);
+  setStylesAll(legendElements('.groupedlegend-group-entries'), styles.legendGroupEntries);
+
+  setStylesAll(legendElements('.groupedlegend-marker'), styles.legendEntryMarkerBase);
+  setStylesAll(legendElements('.groupedlegend-marker.rect'), styles.legendEntryMarkerRect);
+  setStylesAll(legendElements('.groupedlegend-marker.circle'), styles.legendEntryMarkerCircle);
+
+  setStylesAll(legendElements('.groupedlegend-entry'), styles.legendGroupEntry);
+  setStylesAll(legendElements('.groupedlegend-entry-name'), styles.legendEntryName);
+
+  setStylesAll(legendElements('.hidden'), styles.hidden);
+}
+
 export {
   setStyles,
   setStylesAll,
@@ -185,4 +209,5 @@ export {
   findGroupOffset,
   areAllDatasetsHidden,
   determineLegendStyle,
+  applyStyles,
 };
