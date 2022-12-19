@@ -178,12 +178,19 @@ function areAllDatasetsHidden(chart: Chart, group: DatasetGroup, groupOffset: nu
 }
 
 /**
- * Builds Styles object using current chart and applies styling to all legend elements.
+ * Builds Styles object using passed chart and applies styling to legend container elements.
  */
-function applyStyles(chart: Chart, legendContainerHtml: HTMLElement, canvasContainerHtml: HTMLElement) {
+function applyContainerStyles(chart: Chart, legendContainerHtml: HTMLElement, canvasContainerHtml: HTMLElement) {
   const styles = new Styles(chart);
   setStyles(legendContainerHtml.style, styles.legendContainer);
   setStyles(canvasContainerHtml.style, styles.canvasContainer);
+}
+
+/**
+ * Builds Styles object using passed chart and applies styling to legend label elements.
+ */
+function applyLabelStyles(chart: Chart, legendContainerHtml: HTMLElement) {
+  const styles = new Styles(chart);
 
   const legendElements = (selector: string): NodeListOf<HTMLElement> => legendContainerHtml.querySelectorAll(selector);
   setStylesAll(legendElements('.groupedlegend-group-container'), styles.legendGroupContainer);
@@ -209,5 +216,6 @@ export {
   findGroupOffset,
   areAllDatasetsHidden,
   determineLegendStyle,
-  applyStyles,
+  applyContainerStyles,
+  applyLabelStyles,
 };

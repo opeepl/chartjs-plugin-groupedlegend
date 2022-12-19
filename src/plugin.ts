@@ -1,6 +1,7 @@
 import { Chart, Plugin, UpdateMode } from 'chart.js';
 import {
-  applyStyles,
+  applyContainerStyles,
+  applyLabelStyles,
   areAllDatasetsHidden,
   createElement,
   createGroupNameHtml,
@@ -46,6 +47,8 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
     const canvasContainerHtml = chart.canvas.parentElement as HTMLElement;
     // The cast is safe, as HTML was structured that way in start()
     const legendContainerHtml = canvasContainerHtml.previousSibling as HTMLElement;
+    // Style the containers. It has to be done regardless of whether the legend is enabled or not.
+    applyContainerStyles(chart, legendContainerHtml, canvasContainerHtml);
     // Remove old legend items
     while (legendContainerHtml.firstChild) {
       legendContainerHtml.firstChild.remove();
@@ -89,8 +92,8 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
       }
       legendContainerHtml.appendChild(groupContainers);
 
-      // Apply all the styles
-      applyStyles(chart, legendContainerHtml, canvasContainerHtml);
+      // Apply label styles
+      applyLabelStyles(chart, legendContainerHtml);
     }
   },
 };
