@@ -18,37 +18,43 @@ import { GroupedLegendOptions } from './grouped-legend-options';
 export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
   id: 'groupedlegend',
   /**
-   * Restructures HTML from
-   * <external-container>
-   *     canvas
-   * to
-   * <external-container>
-   *     div.legend-container
-   *     div.canvas-container
-   *         canvas
-   * to allow for proper positioning and scaling of the legend and canvas with flexbox.
-   */
+     * Restructures HTML from
+     * <external-container>
+     *     canvas
+     * to
+     * <external-container>
+     *     div.groupedlegend-global-container
+     *         div.groupedlegend-legend-container
+     *         div.groupedlegend-canvas-container
+     *             canvas
+     * to allow for proper positioning and scaling of the legend and canvas with flexbox.
+     */
   start: (chart: Chart): void => {
     const canvasHtml = chart.canvas;
     // There is always some container element (at worst, it is the <body>)
     const externalContainerHtml = canvasHtml.parentElement as HTMLElement;
+    const globalContainerHtml = createElement('div', 'groupedlegend-global-container');
     const legendContainerHtml = createElement('div', 'groupedlegend-legend-container');
     const canvasContainerHtml = createElement('div', 'groupedlegend-canvas-container');
 
-    externalContainerHtml.appendChild(legendContainerHtml);
-    externalContainerHtml.appendChild(canvasContainerHtml);
+    externalContainerHtml.appendChild(globalContainerHtml);
+    globalContainerHtml.appendChild(legendContainerHtml);
+    globalContainerHtml.appendChild(canvasContainerHtml);
     canvasContainerHtml.appendChild(canvasHtml);
   },
   /**
-   * Regenerates grouped legend HTML.
-   */
+     * Regenerates grouped legend HTML.
+     */
   afterUpdate: (chart: Chart, _args: { mode: UpdateMode }, options: GroupedLegendOptions): void => {
     // The cast is safe, as there is always some container element (at worst, it is the <body>)
     const canvasContainerHtml = chart.canvas.parentElement as HTMLElement;
     // The cast is safe, as HTML was structured that way in start()
     const legendContainerHtml = canvasContainerHtml.previousSibling as HTMLElement;
+    // The cast is safe, as HTML was structured that way in start()
+    const globalContainerHtml = legendContainerHtml.parentElement as HTMLElement;
+
     // Style the containers. It has to be done regardless of whether the legend is enabled or not.
-    applyContainerStyles(chart, legendContainerHtml, canvasContainerHtml);
+    applyContainerStyles(chart, globalContainerHtml, legendContainerHtml, canvasContainerHtml);
     // Remove old legend items
     while (legendContainerHtml.firstChild) {
       legendContainerHtml.firstChild.remove();
@@ -97,4 +103,3 @@ export const GroupedLegend: Plugin<'line' | 'bar', GroupedLegendOptions> = {
     }
   },
 };
-

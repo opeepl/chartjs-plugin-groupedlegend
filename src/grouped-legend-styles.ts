@@ -15,19 +15,53 @@ export class Styles {
     };
   }
 
+  /**
+   * positon: top
+   * - groupedlegend-global-container: flex-direction: column
+   * - groupedlegend-legend-container: order: 0
+   *
+   * position: bottom
+   * - groupedlegend-global-container: flex-direction: column
+   * - groupedlegend-legend-container: order: 1
+   *
+   * position: left
+   * - groupedlegend-global-container: flex-direction: row
+   * - groupedlegend-legend-container: order: 0
+   *
+   * position: right
+   * - groupedlegend-global-container: flex-direction: row
+   * - groupedlegend-legend-container: order: 1
+   */
+
+  get globalContainer(): Partial<CSSStyleDeclaration> {
+    const position = this.chartOptions.plugins?.groupedlegend?.position ?? 'top';
+    return {
+      display: 'flex',
+      flexDirection: ['top', 'bottom'].includes(position) ? 'column' : 'row',
+      flexGrow: '1',
+      flexShrink: '1',
+      overflow: 'hidden',
+    };
+  }
+
   get canvasContainer(): Partial<CSSStyleDeclaration> {
     return {
       maxHeight: '100%',
       minHeight: '0',
-      flexGrow: '1',
+      maxWidth: '100%',
+      minWidth: '0',
+      flex: '1',
     };
   }
 
   get legendContainer(): Partial<CSSStyleDeclaration> {
     const font = toFont(this.chartOptions.plugins?.legend?.labels?.font as Partial<FontSpec>);
+    const position = this.chartOptions.plugins?.groupedlegend?.position ?? 'top';
+    const display = this.chartOptions.plugins?.groupedlegend?.display ?? true;
     return {
-      display: 'flex',
+      display: display ? 'flex' : 'none',
       flexDirection: 'row',
+      order: ['top', 'left'].includes(position) ? '0' : '1',
       alignItems: 'center',
       justifyContent: 'center',
       maxHeight: '100%',
@@ -37,6 +71,9 @@ export class Styles {
       paddingRight: '1em',
       // toFont returns canvas-friendly values, so lineHeight needs to be used with a px unit
       lineHeight: `${font.lineHeight}px`,
+      maxWidth: '100%',
+      minWidth: '0',
+      flex: '1',
     };
   }
 
