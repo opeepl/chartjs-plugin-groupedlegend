@@ -15,24 +15,6 @@ export class Styles {
     };
   }
 
-  /**
-   * positon: top
-   * - groupedlegend-global-container: flex-direction: column
-   * - groupedlegend-legend-container: order: 0
-   *
-   * position: bottom
-   * - groupedlegend-global-container: flex-direction: column
-   * - groupedlegend-legend-container: order: 1
-   *
-   * position: left
-   * - groupedlegend-global-container: flex-direction: row
-   * - groupedlegend-legend-container: order: 0
-   *
-   * position: right
-   * - groupedlegend-global-container: flex-direction: row
-   * - groupedlegend-legend-container: order: 1
-   */
-
   get globalContainer(): Partial<CSSStyleDeclaration> {
     const position = this.chartOptions.plugins?.groupedlegend?.position ?? 'top';
     return {
@@ -61,19 +43,19 @@ export class Styles {
     return {
       display: display ? 'flex' : 'none',
       flexDirection: 'row',
+      flexWrap: 'wrap',
+      writingMode: ['top', 'bottom'].includes(position) ? 'horizontal-tb' : 'vertical-lr',
+      gap: '0.75em',
       order: ['top', 'left'].includes(position) ? '0' : '1',
-      alignItems: 'center',
-      justifyContent: 'center',
-      maxHeight: '100%',
       cursor: 'default',
       font: font.string,
       paddingLeft: '1em',
       paddingRight: '1em',
       // toFont returns canvas-friendly values, so lineHeight needs to be used with a px unit
       lineHeight: `${font.lineHeight}px`,
-      maxWidth: '100%',
+      maxHeight: ['left', 'right'].includes(position) ? '100%' : '50%',
+      maxWidth: ['top', 'bottom'].includes(position) ? '100%' : '50%',
       minWidth: '0',
-      flex: '1',
     };
   }
 
@@ -82,6 +64,10 @@ export class Styles {
       display: 'flex',
       flexDirection: 'column',
       color: resolve([this.chartOptions.color, Chart.defaults.color])?.toString(),
+      writingMode: 'horizontal-tb',
+      width: 'min-content',
+      flexGrow: '1',
+      placeContent: 'center',
     };
   }
 
@@ -93,7 +79,6 @@ export class Styles {
 
   get legendGroupEntries(): Partial<CSSStyleDeclaration> {
     return {
-      flexGrow: '1',
       listStyle: 'none',
       paddingLeft: '0',
     };
