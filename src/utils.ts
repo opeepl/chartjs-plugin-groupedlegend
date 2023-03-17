@@ -180,8 +180,9 @@ function areAllDatasetsHidden(chart: Chart, group: DatasetGroup, groupOffset: nu
 /**
  * Builds Styles object using passed chart and applies styling to legend container elements.
  */
-function applyContainerStyles(chart: Chart, legendContainerHtml: HTMLElement, canvasContainerHtml: HTMLElement) {
+function applyContainerStyles(chart: Chart, globalContainerHtml: HTMLElement, legendContainerHtml: HTMLElement, canvasContainerHtml: HTMLElement) {
   const styles = new Styles(chart);
+  setStyles(globalContainerHtml.style, styles.globalContainer);
   setStyles(legendContainerHtml.style, styles.legendContainer);
   setStyles(canvasContainerHtml.style, styles.canvasContainer);
 }

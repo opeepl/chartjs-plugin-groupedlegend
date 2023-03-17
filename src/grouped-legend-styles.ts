@@ -15,28 +15,47 @@ export class Styles {
     };
   }
 
+  get globalContainer(): Partial<CSSStyleDeclaration> {
+    const position = this.chartOptions.plugins?.groupedlegend?.position ?? 'top';
+    return {
+      display: 'flex',
+      flexDirection: ['top', 'bottom'].includes(position) ? 'column' : 'row',
+      flexGrow: '1',
+      flexShrink: '1',
+      overflow: 'hidden',
+    };
+  }
+
   get canvasContainer(): Partial<CSSStyleDeclaration> {
     return {
       maxHeight: '100%',
       minHeight: '0',
-      flexGrow: '1',
+      maxWidth: '100%',
+      minWidth: '0',
+      flex: '1',
     };
   }
 
   get legendContainer(): Partial<CSSStyleDeclaration> {
     const font = toFont(this.chartOptions.plugins?.legend?.labels?.font as Partial<FontSpec>);
+    const position = this.chartOptions.plugins?.groupedlegend?.position ?? 'top';
+    const display = this.chartOptions.plugins?.groupedlegend?.display ?? true;
     return {
-      display: 'flex',
+      display: display ? 'flex' : 'none',
       flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      maxHeight: '100%',
+      flexWrap: 'wrap',
+      writingMode: ['top', 'bottom'].includes(position) ? 'horizontal-tb' : 'vertical-lr',
+      gap: '0.75em',
+      order: ['top', 'left'].includes(position) ? '0' : '1',
       cursor: 'default',
       font: font.string,
       paddingLeft: '1em',
       paddingRight: '1em',
       // toFont returns canvas-friendly values, so lineHeight needs to be used with a px unit
       lineHeight: `${font.lineHeight}px`,
+      maxHeight: ['left', 'right'].includes(position) ? '100%' : '50%',
+      maxWidth: ['top', 'bottom'].includes(position) ? '100%' : '50%',
+      minWidth: '0',
     };
   }
 
@@ -45,6 +64,10 @@ export class Styles {
       display: 'flex',
       flexDirection: 'column',
       color: resolve([this.chartOptions.color, Chart.defaults.color])?.toString(),
+      writingMode: 'horizontal-tb',
+      width: 'min-content',
+      flexGrow: '1',
+      placeContent: 'center',
     };
   }
 
@@ -56,7 +79,6 @@ export class Styles {
 
   get legendGroupEntries(): Partial<CSSStyleDeclaration> {
     return {
-      flexGrow: '1',
       listStyle: 'none',
       paddingLeft: '0',
     };
