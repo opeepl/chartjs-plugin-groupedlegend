@@ -1,6 +1,6 @@
 {
     "name": "@opeepl/chartjs-plugin-groupedlegend",
-    "version": "1.0.7",
+    "version": "1.1.0",
     "description": "ChartJS plugin which adds option to put legend entries into groups",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
