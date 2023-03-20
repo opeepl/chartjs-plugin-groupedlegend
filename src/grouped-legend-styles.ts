@@ -81,6 +81,8 @@ export class Styles {
     return {
       listStyle: 'none',
       paddingLeft: '0',
+      marginLeft: 'auto',
+      marginRight: 'auto',
     };
   }
 
