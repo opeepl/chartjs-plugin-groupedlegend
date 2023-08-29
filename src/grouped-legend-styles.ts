@@ -1,4 +1,4 @@
-import { Chart, ChartOptions, FontSpec } from 'chart.js';
+import { Chart, ChartOptions, Color, FontSpec } from 'chart.js';
 import { resolve, toFont } from 'chart.js/helpers';
 
 export class Styles {
@@ -63,7 +63,7 @@ export class Styles {
     return {
       display: 'flex',
       flexDirection: 'column',
-      color: resolve([this.chartOptions.color, Chart.defaults.color])?.toString(),
+      color: (resolve([this.chartOptions.color, Chart.defaults.color]) as Color)?.toString(),
       writingMode: 'horizontal-tb',
       width: 'min-content',
       flexGrow: '1',
