@@ -1,0 +1,15 @@
+{
+    "name": "js",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "parcel index.html"
+    },
+    "dependencies": {
+        "@opeepl/chartjs-plugin-groupedlegend": "^1.1.1",
+        "chart.js": "^4.3.3"
+    },
+    "devDependencies": {
+        "parcel": "^2.9.3"
+    }
+}

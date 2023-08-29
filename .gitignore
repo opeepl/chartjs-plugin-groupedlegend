@@ -27,3 +27,5 @@ docs/api
 *.log
 *.swp
 *.stackdump
+example/.parcel-cache/
+example/dist/
