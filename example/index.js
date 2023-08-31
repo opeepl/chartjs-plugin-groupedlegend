@@ -13,9 +13,9 @@ const greenColors = ['green', 'darkgreen', 'lawngreen'];
 const blueColors = ['blue', 'darkblue', 'lightblue'];
 
 const createGroup = (colors) => {
-    return seriesLabels.map((label, index) => {
+    return seriesLabels.map((serieLabel, index) => {
         return {
-            label: label,
+            label: serieLabel,
             data: tickLabels.map((tickLabel) => {
                 return {
                     count: randomInt(rangeMin, rangeMax),
