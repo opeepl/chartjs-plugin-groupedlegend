@@ -8,16 +8,14 @@
         "test": "jest --config jestconfig.json",
         "build": "tsc",
         "lint": "eslint . --ext .ts",
-        "lint-and-fix": "eslint . --ext .ts --fix",
-        "prepare": "npm run build",
-        "prepublishOnly": "npm test && npm run lint",
-        "preversion": "npm run lint && npm test",
-        "version": "git add -A src",
-        "postversion": "git push && git push --tags"
+        "lint-and-fix": "eslint . --ext .ts --fix"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/opeepl/chartjs-plugin-groupedlegend.git"
+    },
+    "publishConfig": {
+      "registry": "https://npm.pkg.github.com"
     },
     "keywords": [
         "chartjs",
